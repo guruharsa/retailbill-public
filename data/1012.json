@@ -1,0 +1,16 @@
+{
+ "invoice":1012,
+ "customer":"Varun",
+ "phone":"8610603480",
+ "date":"2026-03-08",
+ "items":[
+  {
+   "name":"Switch Board",
+   "qty":5,
+   "rate":180,
+   "amount":900
+  }
+ ],
+ "total_qty":5,
+ "total":900
+}
