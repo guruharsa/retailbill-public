@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Retail Bill</title>
+<link rel="stylesheet" href="../style.css">
+</head>
+<body>
+<div class="container">
+<div id="bill"></div>
+<div id="error"></div>
+</div>
+
+<script>
+const params = new URLSearchParams(window.location.search);
+const invoice = params.get("id");
+
+if (!invoice) {
+  document.getElementById("error").innerHTML = '<p style="color:red;text-align:center;">Error: No invoice ID provided. Use ?id=INVOICE_NUMBER</p>';
+} else {
+  fetch(`/data/${invoice}.json`)
+    .then(res => {
+      if (!res.ok) throw new Error('Bill not found');
+      return res.json();
+    })
+    .then(bill => {
+      let rows = "";
+      bill.items.forEach(item => {
+        rows += `
+        <tr>
+          <td>${item.name}</td>
+          <td>${item.qty}</td>
+          <td>₹${item.rate}</td>
+          <td>₹${item.amount}</td>
+        </tr>
+        `;
+      });
+
+      document.getElementById("bill").innerHTML = `
+      <h2>Sri Vela Electricals</h2>
+      <p><strong>Invoice:</strong> ${bill.invoice}</p>
+      <p><strong>Date:</strong> ${bill.date}</p>
+      <p><strong>Customer:</strong> ${bill.customer}</p>
+      <p><strong>Phone:</strong> ${bill.phone}</p>
+
+      <table>
+        <tr>
+          <th>Item</th>
+          <th>Qty</th>
+          <th>Rate</th>
+          <th>Amount</th>
+        </tr>
+        ${rows}
+      </table>
+
+      <hr>
+      <p><strong>Total Quantity:</strong> ${bill.total_qty}</p>
+      <h3>Net Amount: ₹${bill.total}</h3>
+      <hr>
+      <p style="text-align:center;font-size:12px;">Thank you for shopping with us!</p>
+      `;
+    })
+    .catch(err => {
+      document.getElementById("error").innerHTML = `<p style="color:red;text-align:center;">Error: ${err.message}</p>`;
+    });
+}
+</script>
+</body>
+</html>
